@@ -100,7 +100,7 @@ y_pred = svm_classifier.predict(X_test_preprocessed)
 
 # Calculate SVM accuracy score
 svm_accuracy = accuracy_score(y_test, y_pred)
-print(f'SVM Accuracy: {svm_accuracy}')
+print(f'SVM Accuracy without SMOTE: {svm_accuracy}')
 
 # Evaluation metrics
 print(classification_report(y_test, y_pred))
