@@ -11,9 +11,6 @@ from sklearn.neighbors import KNeighborsClassifier
 import pandas as pd
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import make_scorer, f1_score
-
-
-
 import os
 import numpy as np
 
@@ -35,8 +32,6 @@ y = df1['drivingStyle']
 # Define the scoring metric
 scorer = make_scorer(f1_score, average='macro')
 
-### SVM with SMOTE
-
 # Splitting the dataset with stratified sampling
 X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1138, stratify=y)
 
@@ -56,6 +51,8 @@ preprocessor = ColumnTransformer(
         ('num', numeric_transformer, numeric_features),
         ('cat', categorical_transformer, categorical_features)
     ])
+
+### SVM with SMOTE
 
 # Integrating preprocessing with model training in a comprehensive pipeline (example with SVM)
 full_pipeline = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', SVC(class_weight='balanced'))])
@@ -77,9 +74,6 @@ print(classification_report(y_test, y_pred))
 
 ### SVM without SMOTE
 
-# Splitting the dataset with stratified sampling
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1138, stratify=y)
-
 # Preprocess the data
 X_train_preprocessed = preprocessor.fit_transform(X_train)
 X_test_preprocessed = preprocessor.transform(X_test)
@@ -91,12 +85,11 @@ svm_classifier.fit(X_train_preprocessed, y_train)
 # Predictions on the test set
 y_pred = svm_classifier.predict(X_test_preprocessed)
 
-
 # Calculate SVM accuracy score
 svm_accuracy = accuracy_score(y_test, y_pred)
 print(f'SVM Accuracy without SMOTE: {svm_accuracy}')
 
-# Corss-Validation
+# Cross-Validation
 scores = cross_val_score(svm_classifier, X_train_preprocessed, y_train, cv=5, scoring=scorer)
 print("SVM F1 Score without SMOTE: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
@@ -104,9 +97,6 @@ print("SVM F1 Score without SMOTE: %0.2f (+/- %0.2f)" % (scores.mean(), scores.s
 print(classification_report(y_test, y_pred))
 
 ### Logistic Regression
-
-# Splitting the dataset with stratified sampling
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1138, stratify=y)
 
 # Preprocess the data
 X_train_preprocessed = preprocessor.fit_transform(X_train)
@@ -143,9 +133,6 @@ print(classification_report(y_test_encoded, y_pred))
 
 ### kNN
 
-# Splitting the dataset with stratified sampling
-X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1138, stratify=y)
-
 # Preprocess the data
 X_train_preprocessed = preprocessor.fit_transform(X_train)
 X_test_preprocessed = preprocessor.transform(X_test)
@@ -168,4 +155,30 @@ print("kNN F1 Score: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 # Evaluation metrics
 print(classification_report(y_test, y_pred))
 
+## SVM Kernels
+
+from sklearn.svm import SVC
+
+# Create SVM models with different kernels
+svm_linear = SVC(kernel='linear')
+svm_poly = SVC(kernel='poly', degree=3)  # Polynomial kernel with degree 3
+svm_rbf = SVC(kernel='rbf')
+svm_sigmoid = SVC(kernel='sigmoid')
+
+# Fit the models to the training data
+svm_linear.fit(X_train_preprocessed, y_train)
+svm_poly.fit(X_train_preprocessed, y_train)
+svm_rbf.fit(X_train_preprocessed, y_train)
+svm_sigmoid.fit(X_train_preprocessed, y_train)
+
+# Evaluate the models
+linear_accuracy = svm_linear.score(X_test_preprocessed, y_test)
+poly_accuracy = svm_poly.score(X_test_preprocessed, y_test)
+rbf_accuracy = svm_rbf.score(X_test_preprocessed, y_test)
+sigmoid_accuracy = svm_sigmoid.score(X_test_preprocessed, y_test)
+
+print("Accuracy with Linear Kernel:", linear_accuracy)
+print("Accuracy with Polynomial Kernel:", poly_accuracy)
+print("Accuracy with RBF Kernel:", rbf_accuracy)
+print("Accuracy with Sigmoid Kernel:", sigmoid_accuracy)
 
