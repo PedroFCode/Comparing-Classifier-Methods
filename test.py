@@ -109,7 +109,7 @@ y_test_encoded = label_encoder.transform(y_test)
 
 # Feature selection using Recursive Feature Elimination (RFE)
 logistic_classifier = LogisticRegression(class_weight='balanced', max_iter=1000)
-rfe = RFE(estimator=logistic_classifier, n_features_to_select=18)  # Adjust the number of features as needed
+rfe = RFE(estimator=logistic_classifier, n_features_to_select=14)  # Adjust the number of features as needed
 X_train_selected = rfe.fit_transform(X_train_preprocessed, y_train_encoded)
 X_test_selected = rfe.transform(X_test_preprocessed)
 
@@ -182,3 +182,37 @@ print("Accuracy with Polynomial Kernel:", poly_accuracy)
 print("Accuracy with RBF Kernel:", rbf_accuracy)
 print("Accuracy with Sigmoid Kernel:", sigmoid_accuracy)
 
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Define the model names
+models = ['SVM with SMOTE', 'SVM without SMOTE', 'Logistic Regression', 'kNN', 'SVM Linear', 'SVM Polynomial', 'SVM RBF', 'SVM Sigmoid']
+
+# Define the accuracy and F1 score values for each model
+accuracy_scores = [0.8097, 0.7778, 0.6193, 0.8898, 0.8170, 0.8455, 0.8523, 0.7148]
+f1_scores = [0.85, 0.71, 0.57, 0.79, np.nan, np.nan, np.nan, np.nan]  # F1 score not available for SVM kernels
+
+# Create subplots for accuracy and F1 score
+fig, axs = plt.subplots(2, 1, figsize=(10, 8))
+
+# Plot accuracy
+axs[0].bar(models, accuracy_scores, color='skyblue')
+axs[0].set_title('Model Accuracy Comparison')
+axs[0].set_ylabel('Accuracy')
+axs[0].set_ylim(0, 1)  # Set y-axis limit to ensure consistent scaling
+axs[0].grid(axis='y')
+
+# Plot F1 score
+axs[1].bar(models, f1_scores, color='lightgreen')
+axs[1].set_title('Model F1 Score Comparison')
+axs[1].set_ylabel('F1 Score')
+axs[1].set_ylim(0, 1)  # Set y-axis limit to ensure consistent scaling
+axs[1].grid(axis='y')
+
+# Rotate x-axis labels for better readability
+plt.setp(axs[0].xaxis.get_majorticklabels(), rotation=45)
+plt.setp(axs[1].xaxis.get_majorticklabels(), rotation=45)
+
+# Show the plots
+plt.tight_layout()
+plt.show()
